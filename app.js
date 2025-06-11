@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors'); 
 const path = require('path');
-const sequelize = require('./src/config/database');
+const { sequelize } = require('./src/config/database');
 
 app.use(express.json());
 

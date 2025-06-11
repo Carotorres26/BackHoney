@@ -1,6 +1,6 @@
 // src/modelos/Client.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { sequelize } = require('../config/database');
 // No necesitas importar Specimen aquí si la asociación se define en associations.js
 
 const Client = sequelize.define('Client', {

@@ -1,6 +1,6 @@
 // src/modelos/Permission.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Ajusta la ruta
+const { sequelize } = require('../config/database'); // Ajusta la ruta
 
 const Permission = sequelize.define('Permission', {
   id: {

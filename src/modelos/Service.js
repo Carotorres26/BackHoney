@@ -1,6 +1,6 @@
 // src/modelos/Service.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); 
+const { sequelize } = require('../config/database');
 
 const Service = sequelize.define('Service', {
   id: {

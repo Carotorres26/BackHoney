@@ -1,6 +1,6 @@
 // src/modelos/SpecimenCategory.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Asegúrate que la ruta es correcta
+const { sequelize } = require('../config/database'); // Asegúrate que la ruta es correcta
 
 const SpecimenCategory = sequelize.define('SpecimenCategory', {
   id: {

@@ -1,6 +1,6 @@
 // src/modelos/RolePermission.js (Temporalmente revertido)
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { sequelize } = require('../config/database');
 
 const RolePermission = sequelize.define('RolePermission', {
     id: {

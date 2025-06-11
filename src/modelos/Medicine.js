@@ -1,6 +1,6 @@
 // src/modelos/Medicine.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { sequelize } = require('../config/database');
 const Specimen = require('./Specimen'); // Import the Specimen model
 
 const Medicine = sequelize.define('Medicine', {

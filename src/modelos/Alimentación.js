@@ -1,6 +1,6 @@
 // src/modelos/Alimentacion.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { sequelize } = require('../config/database');
 const Specimen = require('./Specimen'); // Importamos Specimen para la relación
 
 const Alimentacion = sequelize.define('Alimentacion', {

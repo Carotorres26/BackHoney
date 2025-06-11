@@ -1,7 +1,7 @@
 // src/modelos/associations.js
 
 // 1. PRIMERO importa Sequelize (la librería)
-const Sequelize = require('sequelize');
+const { sequelize } = require('../config/database');
 // 2. LUEGO define Op usando la variable Sequelize que acabas de importar
 const Op = Sequelize.Op;
 

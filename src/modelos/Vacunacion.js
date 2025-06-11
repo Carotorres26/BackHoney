@@ -1,6 +1,6 @@
 // src/modelos/Vacunacion.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { sequelize } = require('../config/database');
 const Specimen = require('./Specimen'); // Importamos Specimen para la relación
 
 const Vacunacion = sequelize.define('Vacunacion', {
