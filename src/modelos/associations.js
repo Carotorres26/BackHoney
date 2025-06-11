@@ -1,9 +1,9 @@
 // src/modelos/associations.js
 
-// 1. PRIMERO importa Sequelize (la librería)
-const { sequelize } = require('../config/database');
-// 2. LUEGO define Op usando la variable Sequelize que acabas de importar
-const Op = Sequelize.Op;
+const { Op } = require('sequelize'); 
+
+// 2. Importa la INSTANCIA de tu conexión
+const { sequelize } = require('../config/database'); 
 
 // Imports de tus modelos
 const Client = require('./client');
@@ -21,9 +21,6 @@ const RolePermission = require('./RolePermission');
 const Medicine = require('./Medicine');
 const Vacunacion = require('./Vacunacion');
 const Alimentacion = require('./Alimentación'); // Asegúrate que el nombre del archivo coincida exactamente
-
-// Importa tu instancia configurada de Sequelize
-const sequelize = require('../config/database');
 
 // Verifica que los modelos se importaron (opcional, para debugging)
 console.log('[Associations] Modelos Cargados:', {
