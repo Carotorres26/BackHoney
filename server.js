@@ -7,7 +7,9 @@ require('dotenv').config();
 // Ahora puedes requerir otros módulos que puedan usar process.env
 const http = require('http'); // O https si usas SSL
 const app = require('./app'); // Requiere tu configuración de Express desde app.js
-const sequelize = require('./src/config/database'); // Asegúrate que la ruta a tu config de DB sea correcta
+
+// <<< ¡¡¡LA CORRECCIÓN ESTÁ AQUÍ!!! >>>
+const { sequelize } = require('./src/config/database'); // Se usa desestructuración para obtener la instancia correcta
 
 // Verifica INMEDIATAMENTE si la variable se cargó
 console.log("Verificando JWT_SECRET después de dotenv.config:", process.env.JWT_SECRET ? 'CARGADA' : 'NO CARGADA - ¡Revisa .env y ubicación de dotenv.config!');
@@ -22,16 +24,15 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 
 // Sincroniza la base de datos y luego inicia el servidor
+// Ahora 'sequelize' es el objeto correcto y tiene el método .sync()
 sequelize.sync({ force: false }) // force: false para producción/desarrollo normal. force: true borrará y recreará tablas.
   .then(() => {
-    // Considera si este log es necesario o si es de una configuración anterior
-    // console.log('Base de datos sincronizada con alter:true.'); // Si ya no usas alter:true, puedes quitarlo
-    console.log('Base de datos sincronizada.');
+    console.log('✅ Base de datos sincronizada.');
     
     // Inicia el servidor escuchando en el puerto especificado Y en todas las interfaces de red
     server.listen(PORT, '0.0.0.0', () => { 
-      console.log(`Server running on port ${PORT} and listening on all interfaces (0.0.0.0)`);
-      console.log(`Backend accesible para emulador Android en: http://10.0.2.2:${PORT}`);
+      console.log(`🚀 Server running on port ${PORT} and listening on all interfaces (0.0.0.0)`);
+      console.log(`➡️  Backend accesible para emulador Android en: http://10.0.2.2:${PORT}`);
       // Para dispositivos en la misma red, necesitarías encontrar la IP local de tu máquina, ej: http://192.168.1.X:${PORT}
     });
   })
