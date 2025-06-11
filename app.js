@@ -7,10 +7,14 @@ const sequelize = require('./src/config/database');
 app.use(express.json());
 
 const corsOptions = {
-    origin: 'http://localhost:5173', 
+        origin: [
+        'http://localhost:5173',          
+        'https://hhoney-d7e51.web.app'     
+    ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: "Content-Type, Authorization", 
     optionsSuccessStatus: 200
+
 };
 app.use(cors(corsOptions)); 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
