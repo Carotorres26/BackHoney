@@ -1,53 +1,70 @@
 // src/repositorios/clientRepository.js
-const Client = require('../modelos/client'); // Asegúrate que la ruta sea correcta
+const Client = require('../modelos/client');
 const { Op } = require('sequelize');
 
+/**
+ * Crea un nuevo cliente en la base de datos.
+ * @param {object} clientData - Los datos del cliente a crear.
+ * @returns {Promise<Client>} El cliente creado.
+ */
 const createClient = async (clientData) => {
     return Client.create(clientData);
 };
 
-// CAMBIO: Modificado para filtrar por estado. Por defecto, solo trae los activos.
+/**
+ * Obtiene todos los clientes con opción de filtrar por estado.
+ * @param {object} query - Objeto de consulta, ej: { estado: 'activo' }.
+ * @returns {Promise<Array<Client>>} Un array de clientes.
+ */
 const getAllClients = async (query = {}) => {
     const whereClause = {};
-
-    // Si se especifica un estado ('activo' o 'inactivo'), se usa.
-    // Si no, por defecto solo se muestran los 'activos'.
     if (query.estado && ['activo', 'inactivo'].includes(query.estado)) {
         whereClause.estado = query.estado;
-    } else {
+    } else if (query.estado !== 'todos') { // Si no es 'todos' ni un estado válido, por defecto son activos
         whereClause.estado = 'activo';
     }
-    
-    // Si se pide 'todos', se elimina el filtro de estado.
-    if (query.estado === 'todos') {
-        delete whereClause.estado;
-    }
-
     return Client.findAll({ where: whereClause });
 };
 
+/**
+ * Obtiene un cliente por su ID.
+ * @param {number} id - El ID del cliente.
+ * @returns {Promise<Client|null>} El cliente encontrado o null.
+ */
 const getClientById = async (id) => {
-    // Buscamos sin importar el estado.
     return Client.findByPk(id);
 };
 
+/**
+ * Actualiza los datos de un cliente por su ID.
+ * @param {number} id - El ID del cliente.
+ * @param {object} clientData - Los nuevos datos del cliente.
+ * @returns {Promise<number>} El número de filas actualizadas (1 o 0).
+ */
 const updateClient = async (id, clientData) => {
-    const [updated] = await Client.update(clientData, {
-        where: { id }
-    });
+    const [updated] = await Client.update(clientData, { where: { id } });
     return updated;
 };
 
-// CAMBIO: Ahora hacemos "soft delete" en lugar de borrado físico.
-const deleteClient = async (id) => {
-    const [updated] = await Client.update({ estado: 'inactivo' }, {
-        where: { id }
-    });
-    return updated; // Devuelve 1 si se actualizó, 0 si no se encontró.
-};
-
+/**
+ * Busca un cliente por su número de documento.
+ * @param {string} documento - El documento del cliente.
+ * @returns {Promise<Client|null>} El cliente encontrado o null.
+ */
 const findOne = async (documento) => {
   return Client.findOne({ where: { documento } });
+};
+
+/**
+ * Realiza un borrado físico y permanente (hard delete) de un cliente.
+ * @param {number} id - El ID del cliente a eliminar.
+ * @returns {Promise<number>} El número de filas eliminadas.
+ */
+const deleteClient = async (id) => {
+    const deleted = await Client.destroy({
+        where: { id }
+    });
+    return deleted;
 };
 
 module.exports = {
@@ -55,6 +72,6 @@ module.exports = {
     getAllClients,
     getClientById,
     updateClient,
-    deleteClient,
-    findOne
+    findOne,
+    deleteClient // Hard delete
 };

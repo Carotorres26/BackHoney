@@ -17,6 +17,7 @@ module.exports = {
       { name: 'crearClientes', createdAt: new Date(), updatedAt: new Date() },
       { name: 'leerClientes', createdAt: new Date(), updatedAt: new Date() },
       { name: 'actualizarClientes', createdAt: new Date(), updatedAt: new Date() },
+      { name: 'cambiarEstadoClientes', createdAt: new Date(), updatedAt: new Date() },
       { name: 'eliminarClientes', createdAt: new Date(), updatedAt: new Date() },
       // Contratos
       { name: 'acceso_contratos', createdAt: new Date(), updatedAt: new Date() },

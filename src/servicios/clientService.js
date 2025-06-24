@@ -5,7 +5,6 @@ const createClient = async (clientData) => {
     return clientRepository.createClient(clientData);
 };
 
-// CAMBIO: Pasamos el query al repositorio para el filtrado por estado.
 const getAllClients = async (query) => {
     return clientRepository.getAllClients(query);
 };
@@ -21,42 +20,19 @@ const updateClient = async (id, clientData) => {
             throw new Error('Ya existe un cliente con este documento');
         }
     }
-    
-    // CAMBIO: Evitamos que el estado se modifique por esta vía.
-    // El estado solo debe cambiarse a través del endpoint específico.
     delete clientData.estado;
-
     const updated = await clientRepository.updateClient(id, clientData);
     if (!updated) {
-        throw new Error('Cliente no encontrado');
+        throw new Error('Cliente no encontrado o sin cambios para aplicar');
     }
     return clientRepository.getClientById(id);
 };
 
-// CAMBIO: La lógica ahora es de "soft delete" (desactivación).
-const deleteClient = async (id) => {
-    const client = await clientRepository.getClientById(id);
-    if (!client) {
-        throw new Error('Cliente no encontrado');
-    }
-    if (client.estado === 'inactivo') {
-        throw new Error('El cliente ya está inactivo');
-    }
-
-    const deactivated = await clientRepository.deleteClient(id); // El repo lo marca como inactivo
-    if (!deactivated) {
-        throw new Error('No se pudo desactivar el cliente');
-    }
-    return true;
-};
-
-// ---- NUEVO SERVICIO: Para cambiar el estado explícitamente ----
 const updateClientStatus = async (id, newStatus) => {
     const client = await clientRepository.getClientById(id);
     if (!client) {
         throw new Error('Cliente no encontrado');
     }
-
     const updated = await clientRepository.updateClient(id, { estado: newStatus });
     if (!updated) {
         throw new Error('No se pudo actualizar el estado del cliente');
@@ -68,12 +44,33 @@ const findOne = async(documento) => {
   return clientRepository.findOne(documento);
 };
 
+/**
+ * Servicio para la eliminación permanente (hard delete).
+ * Incluye la lógica de negocio para prevenir el borrado si hay datos asociados.
+ * @param {number} id - El ID del cliente a eliminar.
+ * @returns {Promise<boolean>}
+ */
+const deleteClient = async (id) => {
+    const client = await clientRepository.getClientById(id);
+    if (!client) {
+        throw new Error('Cliente no encontrado');
+    }
+    if (client.ejemplares > 0) {
+        throw new Error('No se puede eliminar un cliente que tiene ejemplares asociados.');
+    }
+    const deleted = await clientRepository.deleteClient(id);
+    if (!deleted) {
+        throw new Error('No se pudo eliminar el cliente.');
+    }
+    return true;
+};
+
 module.exports = {
     createClient,
     getAllClients,
     getClientById,
     updateClient,
-    deleteClient,
     findOne,
-    updateClientStatus // ---- NUEVO: Exportamos el nuevo servicio
+    updateClientStatus,
+    deleteClient // Hard delete
 };

@@ -6,57 +6,34 @@ const {
     createClientValidation,
     updateClientValidation,
     clientIdValidation,
-    updateClientStatusValidation // ---- NUEVO: Importamos la nueva validación
+    updateClientStatusValidation
 } = require('../middlewares/clientValidations');
 const { authenticate } = require('../middlewares/auth');
 const authorize = require('../middlewares/authorize');
 
-// POST / (Crear Cliente) - sin cambios
-router.post('/',
-    authenticate,
-    authorize('crearClientes'),
-    createClientValidation,
-    ClientController.createClient
+router.use(authenticate);
+
+// --- RUTAS CRUD PARA CLIENTES (PATRÓN SIMPLIFICADO) ---
+
+router.get('/', authorize('acceso_clientes'), ClientController.getAllClients);
+router.get('/:id', authorize('acceso_clientes'), clientIdValidation, ClientController.getClientById);
+router.post('/', authorize('crearClientes'), createClientValidation, ClientController.createClient);
+router.put('/:id', authorize('actualizarClientes'), updateClientValidation, ClientController.updateClient);
+
+// PATCH para cambiar el estado (activar/desactivar)
+router.patch(
+    '/:id/status',
+    authorize('cambiarEstadoClientes'), 
+    updateClientStatusValidation,
+    ClientController.updateClientStatus
 );
 
-// GET / (Obtener Clientes) - sin cambios en la ruta, pero ahora acepta query params
-router.get('/',
-    authenticate,
-    authorize('acceso_clientes'),
-    ClientController.getAllClients
-);
-
-// GET /:id (Obtener Cliente por ID) - sin cambios
-router.get('/:id',
-    authenticate,
-    authorize('acceso_clientes'),
-    clientIdValidation,
-    ClientController.getClientById
-);
-
-// PUT /:id (Actualizar Cliente) - sin cambios
-router.put('/:id',
-    authenticate,
-    authorize('actualizarClientes'),
-    updateClientValidation,
-    ClientController.updateClient
-);
-
-// DELETE /:id (Desactivar Cliente) - sin cambios en la ruta, pero la acción es soft-delete
-router.delete('/:id',
-    authenticate,
-    authorize('eliminarClientes'),
+// DELETE para la eliminación PERMANENTE
+router.delete(
+    '/:id',
+    authorize('eliminarClientes'), // Este permiso ahora es para una acción destructiva
     clientIdValidation,
     ClientController.deleteClient
-);
-
-// ---- NUEVA RUTA: Para cambiar el estado de un cliente ----
-// Se recomienda usar PATCH para actualizaciones parciales.
-router.patch('/:id/status',
-    authenticate,
-    authorize('gestionarEstadoClientes'), // <-- Considera crear este nuevo permiso
-    updateClientStatusValidation, // Usa la nueva validación
-    ClientController.updateClientStatus // Usa el nuevo controlador
 );
 
 module.exports = router;
