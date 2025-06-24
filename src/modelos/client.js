@@ -1,7 +1,6 @@
 // src/modelos/Client.js
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-// No necesitas importar Specimen aquí si la asociación se define en associations.js
 
 const Client = sequelize.define('Client', {
     id: {
@@ -9,7 +8,7 @@ const Client = sequelize.define('Client', {
         primaryKey: true,
         autoIncrement: true,
     },
-    nombre: { // Asegúrate que este sea el nombre correcto, antes era nombreCompleto
+    nombre: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -18,7 +17,6 @@ const Client = sequelize.define('Client', {
         allowNull: false,
         unique: true,
     },
-    // Cambiado 'correo' a 'email' para consistencia (opcional, pero común)
     email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -26,17 +24,23 @@ const Client = sequelize.define('Client', {
     },
     celular: {
         type: DataTypes.STRING,
-        allowNull: false, 
+        allowNull: false,
     },
     ejemplares: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 0, // <-- CORRECCIÓN: Añadido valor por defecto
+        defaultValue: 0,
         comment: 'Número de ejemplares asociados a este cliente'
     },
+    estado: {
+        type: DataTypes.ENUM('activo', 'inactivo'),
+        allowNull: false,
+        defaultValue: 'activo',
+        comment: 'Estado del cliente (activo/inactivo). Permite soft-delete.'
+    }
 }, {
-    tableName: 'clients', // Nombre de la tabla explícito
-    timestamps: true, // <-- RECOMENDADO: Cambiado a true para que .changed() funcione bien
+    tableName: 'clients',
+    timestamps: true,
 });
 
 module.exports = Client;
